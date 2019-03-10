@@ -16,7 +16,7 @@ final class GameTest extends TestCase
 {
     public function testItDoesNotAllowToCreateAGameWithTheSameUser()
     {
-        $user1 = new User();
+        $user1 = new User('William');
 
         $this->expectException(NonUniqueUsersAtGameCreationException::class);
 
@@ -25,8 +25,8 @@ final class GameTest extends TestCase
 
     public function testItDoesNotAllowAUserToMoveWhenIsNotHisTurn()
     {
-        $user1 = new User();
-        $user2 = new User();
+        $user1 = new User('William');
+        $user2 = new User('Shakespeare');
 
         $game = new Game($user1, $user2);
 
@@ -38,8 +38,8 @@ final class GameTest extends TestCase
 
     public function testItHasNoUserMovementsByDefault()
     {
-        $user1 = new User();
-        $user2 = new User();
+        $user1 = new User('William');
+        $user2 = new User('Shakespeare');
 
         $game = new Game($user1, $user2);
 
@@ -48,8 +48,8 @@ final class GameTest extends TestCase
 
     public function testItAddsMovements()
     {
-        $user1 = new User();
-        $user2 = new User();
+        $user1 = new User('William');
+        $user2 = new User('Shakespeare');
 
         $game = new Game($user1, $user2);
 

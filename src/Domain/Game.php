@@ -45,7 +45,7 @@ final class Game
      *
      * @throws NotUserTurnException
      */
-    public function move(Movement $movement)
+    public function move(Movement $movement): void
     {
         $lastMovement = $this->movementHistoric->getLastMovement();
 
@@ -59,5 +59,15 @@ final class Game
     public function getMovementHistoric(): MovementHistoric
     {
         return $this->movementHistoric;
+    }
+
+    public function getFirstUser(): User
+    {
+        return $this->user1;
+    }
+
+    public function getSecondUser(): User
+    {
+        return $this->user2;
     }
 }
