@@ -29,8 +29,10 @@ class StartNewGameCommand extends Command
 
             ->setHelp('This command allows you to create a new TicTacToe game')
 
+            ->addArgument('user1_id', InputArgument::REQUIRED ,'First user identifier')
             ->addArgument('user1', InputArgument::REQUIRED ,'First user')
 
+            ->addArgument('user2_id', InputArgument::REQUIRED ,'Second user identifier')
             ->addArgument('user2', InputArgument::REQUIRED ,'Second user')
         ;
     }
@@ -38,8 +40,14 @@ class StartNewGameCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $game = $this->startNewGameUseCase->__invoke(
-            new User($input->getArgument('user1')),
-            new User($input->getArgument('user2'))
+            new User(
+                $input->getArgument('user1_id'),
+                $input->getArgument('user1')
+            ),
+            new User(
+                $input->getArgument('user2_id'),
+                $input->getArgument('user2')
+            )
         );
 
         $output->writeln([

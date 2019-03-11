@@ -14,8 +14,8 @@ final class CreateUsersUseCase
         $this->userRepository = $userRepository;
     }
 
-    public function __invoke(string $name): User
+    public function __invoke(string  $id, string $name): User
     {
-        return $this->userRepository->create($name);
+        return $this->userRepository->create($id, $name);
     }
 }

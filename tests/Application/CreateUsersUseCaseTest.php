@@ -12,11 +12,12 @@ use TicTacToe\Infrastructure\UserRepositoryInMemory;
 final class CreateUsersUseCaseTest extends TestCase
 {
     /**
+     * @param string $id
      * @param string $name
      *
      * @dataProvider getUserNames
      */
-   public function testItCreateUsers(string $name)
+   public function testItCreateUsers(string $id, string $name)
    {
        $userRepository = $this->createMock(UserRepositoryInMemory::class);
 
@@ -26,7 +27,7 @@ final class CreateUsersUseCaseTest extends TestCase
 
        $createUsersUseCase = new CreateUsersUseCase($userRepository);
 
-       $user = $createUsersUseCase->__invoke($name);
+       $user = $createUsersUseCase->__invoke($id, $name);
 
        $this->assertInstanceOf(User::class, $user);
    }
@@ -34,8 +35,8 @@ final class CreateUsersUseCaseTest extends TestCase
     public function getUserNames()
     {
         return [
-            ['William'],
-            ['Shakespeare'],
+            ['user1', 'William'],
+            ['user2', 'Shakespeare'],
         ];
     }
 }

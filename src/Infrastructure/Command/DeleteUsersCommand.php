@@ -29,13 +29,17 @@ class DeleteUsersCommand extends Command
 
             ->setHelp('This command allows you to delete a User')
 
+            ->addArgument('id', InputArgument::REQUIRED ,'User identifier')
             ->addArgument('name', InputArgument::REQUIRED ,'User name')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $user = new User($input->getArgument('name'));
+        $user = new User(
+            $input->getArgument('id'),
+            $input->getArgument('name')
+        );
 
         $this->deleteUsersUseCase->__invoke(
             $user

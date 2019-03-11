@@ -12,13 +12,14 @@ use TicTacToe\Infrastructure\UserRepositoryInMemory;
 final class DeleteUsersUseCaseTest extends TestCase
 {
     /**
+     * @param string $id
      * @param string $name
      *
      * @dataProvider getUserNames
      */
-   public function testItDeletesUsers(string $name)
+   public function testItDeletesUsers(string $id, string $name)
    {
-       $user = new User($name);
+       $user = new User($id, $name);
 
        $userRepository = $this->createMock(UserRepositoryInMemory::class);
 
@@ -34,8 +35,8 @@ final class DeleteUsersUseCaseTest extends TestCase
     public function getUserNames()
     {
         return [
-            ['William'],
-            ['Shakespeare'],
+            ['user1', 'William'],
+            ['user2', 'Shakespeare'],
         ];
     }
 }

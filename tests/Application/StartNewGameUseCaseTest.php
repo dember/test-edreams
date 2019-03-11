@@ -12,24 +12,30 @@ use TicTacToe\Domain\User;
 final class StartNewGameUseCaseTest extends TestCase
 {
     /**
-     * @param string $name1
-     * @param string $name2
+     * @param array $user1
+     * @param array $user2
      *
-     * @dataProvider getUserNames
+     * @dataProvider getUsersInfo
      */
-   public function testItStartNewGame(string $name1, string $name2)
-   {
-       $startNewGameUseCase = new StartNewGameUseCase();
+    public function testItStartNewGame(array $user1, array $user2)
+    {
+        $startNewGameUseCase = new StartNewGameUseCase();
 
-       $game = $startNewGameUseCase->__invoke(new User($name1), new User($name2));
+        $game = $startNewGameUseCase->__invoke(
+            new User($user1['id'], $user1['name']),
+            new User($user2['id'], $user2['name'])
+        );
 
-       $this->assertInstanceOf(Game::class, $game);
-   }
+        $this->assertInstanceOf(Game::class, $game);
+    }
 
-    public function getUserNames()
+    public function getUsersInfo()
     {
         return [
-            ['William', 'Shakespeare'],
+            [
+                ['id'   => 'user1','name' => 'William'],
+                ['id'    => 'user2','name' => 'Shakespeare']
+            ]
         ];
     }
 }

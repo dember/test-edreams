@@ -28,6 +28,7 @@ class CreateUsersCommand extends Command
 
             ->setHelp('This command allows you to create a new User')
 
+            ->addArgument('id', InputArgument::REQUIRED ,'User identifier')
             ->addArgument('name', InputArgument::REQUIRED ,'User name')
         ;
     }
@@ -35,6 +36,7 @@ class CreateUsersCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $user = $this->createUsersUseCase->__invoke(
+            $input->getArgument('id'),
             $input->getArgument('name')
         );
 

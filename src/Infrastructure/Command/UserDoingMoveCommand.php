@@ -36,11 +36,13 @@ class UserDoingMoveCommand extends Command
 
             ->setHelp('This command allows you to make a Movement in a Game')
 
+            ->addArgument('user1_id', InputArgument::REQUIRED,'First user identifier')
             ->addArgument('user1', InputArgument::REQUIRED,'First user')
 
+            ->addArgument('user2_id', InputArgument::REQUIRED,'Second user identifier')
             ->addArgument('user2', InputArgument::REQUIRED,'Second user')
 
-            ->addArgument('user doing move', InputArgument::REQUIRED,'User doing Movement')
+            ->addArgument('user doing move identifier', InputArgument::REQUIRED,'User identifier doing Movement')
 
             ->addArgument('X coordinate', InputArgument::REQUIRED,'X Position coordinate')
 
@@ -58,11 +60,17 @@ class UserDoingMoveCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $game = $this->startNewGameUseCase->__invoke(
-            new User($input->getArgument('user1')),
-            new User($input->getArgument('user2'))
+            new User(
+                $input->getArgument('user1_id'),
+                $input->getArgument('user1')
+            ),
+            new User(
+                $input->getArgument('user2_id'),
+                $input->getArgument('user2')
+            )
         );
 
-        $firstUserSelected = $game->getFirstUser()->getName() === $input->getArgument('user doing move');
+        $firstUserSelected = $game->getFirstUser()->getId() === $input->getArgument('user doing move identifier');
 
         $this->userDoingMoveUseCase->__invoke(
             $game, new UserMovement(

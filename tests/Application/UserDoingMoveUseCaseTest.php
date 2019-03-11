@@ -15,18 +15,21 @@ use TicTacToe\Domain\UserMovement;
 final class UserDoingMoveUseCaseTest extends TestCase
 {
     /**
-     * @param string $name1
-     * @param string $name2
+     * @param array $user1
+     * @param array $user2
      *
-     * @dataProvider getUserNames
+     * @dataProvider getUsersInfo
      *
      * @throws \TicTacToe\Domain\Exception\NotUserTurnException
      */
-   public function testItStartNewGame(string $name1, string $name2)
+   public function testItDoesAMove(array $user1, array $user2)
    {
        $startNewGameUseCase = new StartNewGameUseCase();
 
-       $game = $startNewGameUseCase->__invoke(new User($name1), new User($name2));
+       $game = $startNewGameUseCase->__invoke(
+           new User($user1['id'], $user1['name']),
+           new User($user2['id'], $user2['name'])
+       );
 
        $userDoingMoveUseCase = new UserDoingMoveUseCase();
 
@@ -38,10 +41,13 @@ final class UserDoingMoveUseCaseTest extends TestCase
        $this->assertCount(1, $game->getMovementHistoric()->getMovements());
    }
 
-    public function getUserNames()
+    public function getUsersInfo()
     {
         return [
-            ['William', 'Shakespeare'],
+            [
+                ['id'   => 'user1','name' => 'William'],
+                ['id'    => 'user2','name' => 'Shakespeare']
+            ]
         ];
     }
 }

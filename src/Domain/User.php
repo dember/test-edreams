@@ -6,11 +6,18 @@ namespace TicTacToe\Domain;
 
 class User
 {
+    private $id;
     private $name;
 
-    public function __construct(string $name)
+    public function __construct(string $id, string $name)
     {
+        $this->id   = $id;
         $this->name = $name;
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 
     public function getName()
