@@ -1,7 +1,7 @@
 version: '3'
 services:
     apache:
-        build: .docker/apache
+        image: dember/dockers:apache2
         container_name: test-edreams_apache
         ports:
           - 8080:80
@@ -12,8 +12,10 @@ services:
           - php
 
     php:
-        build: .docker/php
+        image: dember/php-symfony:php7.2.10
         working_dir: /home/wwwroot/test-edreams
         container_name: test-edreams_php
         volumes:
           - .:/home/wwwroot/test-edreams
+          - ./php/php.ini:/usr/local/etc/php/php.ini
+          - ./php/php-fpm-pool.conf:/usr/local/etc/php/pool.d/www.conf
