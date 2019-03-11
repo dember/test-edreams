@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TicTacToe\Application\StartNewGameUseCase;
 use TicTacToe\Application\UserDoingMoveUseCase;
+use TicTacToe\Domain\Exception\GameAlreadyFinishedException;
 use TicTacToe\Domain\Exception\NotUserTurnException;
 use TicTacToe\Domain\Position;
 use TicTacToe\Domain\User;
@@ -56,6 +57,7 @@ class UserDoingMoveCommand extends Command
      *
      * @return int|null|void
      * @throws NotUserTurnException
+     * @throws GameAlreadyFinishedException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

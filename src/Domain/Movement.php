@@ -8,5 +8,5 @@ interface Movement
 {
     public function getInitiator();
 
-    public function getPosition();
+    public function getPosition(): Position;
 }
