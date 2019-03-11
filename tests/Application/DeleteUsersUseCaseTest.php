@@ -6,37 +6,38 @@ namespace TicTacToe\tests\Domain;
 
 use PHPUnit\Framework\TestCase;
 use TicTacToe\Application\DeleteUsersUseCase;
-use TicTacToe\Domain\User;
 use TicTacToe\Infrastructure\UserRepositoryInMemory;
 
 final class DeleteUsersUseCaseTest extends TestCase
 {
+    private $userRepositoryInMemory;
+
+    public function setUp()
+    {
+        $this->userRepositoryInMemory = new UserRepositoryInMemory();
+    }
+
     /**
      * @param string $id
-     * @param string $name
      *
-     * @dataProvider getUserNames
+     * @dataProvider getUserIds
      */
-   public function testItDeletesUsers(string $id, string $name)
-   {
-       $user = new User($id, $name);
+    public function testItDeletesUsers(string $id)
+    {
+        $user = $this->userRepositoryInMemory->find($id);
 
-       $userRepository = $this->createMock(UserRepositoryInMemory::class);
+        $deleteUsersUseCase = new DeleteUsersUseCase($this->userRepositoryInMemory);
 
-       $userRepository->expects($this->once())
-           ->method('delete')
-           ->with($this->isInstanceOf(User::class));
+        $deleteUsersUseCase->__invoke($user);
 
-       $deleteUsersUseCase = new DeleteUsersUseCase($userRepository);
+        $this->assertEmpty($this->userRepositoryInMemory->find($id));
+    }
 
-       $deleteUsersUseCase->__invoke($user);
-   }
-
-    public function getUserNames()
+    public function getUserIds()
     {
         return [
-            ['user1', 'William'],
-            ['user2', 'Shakespeare'],
+            ['user1'],
+            ['user2'],
         ];
     }
 }

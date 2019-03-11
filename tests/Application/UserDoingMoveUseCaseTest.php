@@ -22,31 +22,31 @@ final class UserDoingMoveUseCaseTest extends TestCase
      *
      * @throws \TicTacToe\Domain\Exception\NotUserTurnException
      */
-   public function testItDoesAMove(array $user1, array $user2)
-   {
-       $startNewGameUseCase = new StartNewGameUseCase();
+    public function testItDoesAMove(array $user1, array $user2)
+    {
+        $startNewGameUseCase = new StartNewGameUseCase();
 
-       $game = $startNewGameUseCase->__invoke(
-           new User($user1['id'], $user1['name']),
-           new User($user2['id'], $user2['name'])
-       );
+        $game = $startNewGameUseCase->__invoke(
+            new User($user1['id'], $user1['name']),
+            new User($user2['id'], $user2['name'])
+        );
 
-       $userDoingMoveUseCase = new UserDoingMoveUseCase();
+        $userDoingMoveUseCase = new UserDoingMoveUseCase();
 
-       $userDoingMoveUseCase->__invoke(
-           $game,
-           new UserMovement($game->getFirstUser(), new Position(0, 0)
-       ));
+        $userDoingMoveUseCase->__invoke(
+            $game,
+            new UserMovement($game->getFirstUser(), new Position(0, 0)
+            ));
 
-       $this->assertCount(1, $game->getMovementHistoric()->getMovements());
-   }
+        $this->assertCount(1, $game->getMovementHistoric()->getMovements());
+    }
 
     public function getUsersInfo()
     {
         return [
             [
-                ['id'   => 'user1','name' => 'William'],
-                ['id'    => 'user2','name' => 'Shakespeare']
+                ['id' => 'user1', 'name' => 'William'],
+                ['id' => 'user2', 'name' => 'Shakespeare']
             ]
         ];
     }

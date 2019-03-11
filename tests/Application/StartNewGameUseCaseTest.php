@@ -33,8 +33,8 @@ final class StartNewGameUseCaseTest extends TestCase
     {
         return [
             [
-                ['id'   => 'user1','name' => 'William'],
-                ['id'    => 'user2','name' => 'Shakespeare']
+                ['id' => 'user1', 'name' => 'William'],
+                ['id' => 'user2', 'name' => 'Shakespeare']
             ]
         ];
     }

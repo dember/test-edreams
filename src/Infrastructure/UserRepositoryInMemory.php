@@ -7,7 +7,7 @@ use TicTacToe\Domain\UserRepository;
 
 class UserRepositoryInMemory implements UserRepository
 {
-    public $users = [];
+    private $users = [];
 
     public function __construct()
     {

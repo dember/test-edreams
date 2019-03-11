@@ -6,11 +6,17 @@ namespace TicTacToe\tests\Domain;
 
 use PHPUnit\Framework\TestCase;
 use TicTacToe\Application\CreateUsersUseCase;
-use TicTacToe\Domain\User;
 use TicTacToe\Infrastructure\UserRepositoryInMemory;
 
 final class CreateUsersUseCaseTest extends TestCase
 {
+    private $userRepositoryInMemory;
+
+    public function setUp()
+    {
+        $this->userRepositoryInMemory = new UserRepositoryInMemory();
+    }
+
     /**
      * @param string $id
      * @param string $name
@@ -19,24 +25,21 @@ final class CreateUsersUseCaseTest extends TestCase
      */
    public function testItCreateUsers(string $id, string $name)
    {
-       $userRepository = $this->createMock(UserRepositoryInMemory::class);
+       $userNotYetCreated = $this->userRepositoryInMemory->find($id);
 
-       $userRepository->expects($this->once())
-           ->method('create')
-           ->with($this->isType('string'));
+       $createUsersUseCase = new CreateUsersUseCase($this->userRepositoryInMemory);
 
-       $createUsersUseCase = new CreateUsersUseCase($userRepository);
+       $createUsersUseCase->__invoke($id, $name);
 
-       $user = $createUsersUseCase->__invoke($id, $name);
+       $userCreated = $this->userRepositoryInMemory->find($id);
 
-       $this->assertInstanceOf(User::class, $user);
+       $this->assertNotEquals($userNotYetCreated, $userCreated);
    }
 
     public function getUserNames()
     {
         return [
-            ['user1', 'William'],
-            ['user2', 'Shakespeare'],
+            ['user3', 'William'],
         ];
     }
 }
