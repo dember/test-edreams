@@ -7,48 +7,51 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TicTacToe\Application\DeleteUsersUseCase;
-use TicTacToe\Domain\User;
+use TicTacToe\Infrastructure\UserRepositoryInMemory;
 
 class DeleteUsersCommand extends Command
 {
-    protected static $defaultName = 'tictactoe:create-users';
+    protected static $defaultName = 'tictactoe:delete-users';
 
+    private $userRepositoryInMemory;
     private $deleteUsersUseCase;
 
-    public function __construct(DeleteUsersUseCase $deleteUsersUseCase)
+    public function __construct(DeleteUsersUseCase $deleteUsersUseCase, UserRepositoryInMemory $userRepositoryInMemory)
     {
         parent::__construct();
 
-        $this->deleteUsersUseCase = $deleteUsersUseCase;
+        $this->userRepositoryInMemory = $userRepositoryInMemory;
+        $this->deleteUsersUseCase     = $deleteUsersUseCase;
     }
 
     protected function configure()
     {
         $this
             ->setDescription('Deletes a User.')
-
             ->setHelp('This command allows you to delete a User')
-
-            ->addArgument('id', InputArgument::REQUIRED ,'User identifier')
-            ->addArgument('name', InputArgument::REQUIRED ,'User name')
-        ;
+            ->addArgument('user_id', InputArgument::REQUIRED, 'User identifier');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $user = new User(
-            $input->getArgument('id'),
-            $input->getArgument('name')
-        );
+        $user = $this->userRepositoryInMemory->find($input->getArgument('user_id'));
 
-        $this->deleteUsersUseCase->__invoke(
-            $user
-        );
+        if (is_null($user)) {
+            $output->writeln([
+                'User not found',
+                '=========================',
+                '',
+            ]);
+        } else {
+            $this->deleteUsersUseCase->__invoke(
+                $user
+            );
 
-        $output->writeln([
-            'User successfully deleted',
-            '=========================',
-            '',
-        ]);
+            $output->writeln([
+                'User successfully deleted',
+                '=========================',
+                '',
+            ]);
+        }
     }
 }

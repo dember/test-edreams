@@ -13,19 +13,28 @@ use TicTacToe\Domain\Exception\NotUserTurnException;
 use TicTacToe\Domain\Position;
 use TicTacToe\Domain\User;
 use TicTacToe\Domain\UserMovement;
+use TicTacToe\Infrastructure\GameRepositoryInMemory;
+use TicTacToe\Infrastructure\UserRepositoryInMemory;
 
 class UserDoingMoveCommand extends Command
 {
     protected static $defaultName = 'tictactoe:game-move';
 
-    private $startNewGameUseCase;
+    private $gameRepositoryInMemory;
+    private $userRepositoryInMemory;
     private $userDoingMoveUseCase;
 
-    public function __construct(StartNewGameUseCase $startNewGameUseCase, UserDoingMoveUseCase $userDoingMoveUseCase)
+    public function __construct(
+        GameRepositoryInMemory $gameRepositoryInMemory,
+        UserRepositoryInMemory $userRepositoryInMemory,
+        UserDoingMoveUseCase $userDoingMoveUseCase
+    )
     {
         parent::__construct();
 
-        $this->startNewGameUseCase  = $startNewGameUseCase;
+        $this->userRepositoryInMemory = $userRepositoryInMemory;
+
+        $this->gameRepositoryInMemory = $gameRepositoryInMemory;
 
         $this->userDoingMoveUseCase = $userDoingMoveUseCase;
     }
@@ -35,15 +44,11 @@ class UserDoingMoveCommand extends Command
         $this
             ->setDescription('Make a Movement in a Game.')
 
-            ->setHelp('This command allows you to make a Movement in a Game')
+            ->setHelp('This command allows you to make a Movement in a Game by a User')
 
-            ->addArgument('user1_id', InputArgument::REQUIRED,'First user identifier')
-            ->addArgument('user1', InputArgument::REQUIRED,'First user')
+            ->addArgument('user_id', InputArgument::REQUIRED,'User identifier')
 
-            ->addArgument('user2_id', InputArgument::REQUIRED,'Second user identifier')
-            ->addArgument('user2', InputArgument::REQUIRED,'Second user')
-
-            ->addArgument('user doing move identifier', InputArgument::REQUIRED,'User identifier doing Movement')
+            ->addArgument('game_id', InputArgument::REQUIRED,'Game identifier')
 
             ->addArgument('X coordinate', InputArgument::REQUIRED,'X Position coordinate')
 
@@ -61,33 +66,31 @@ class UserDoingMoveCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $game = $this->startNewGameUseCase->__invoke(
-            new User(
-                $input->getArgument('user1_id'),
-                $input->getArgument('user1')
-            ),
-            new User(
-                $input->getArgument('user2_id'),
-                $input->getArgument('user2')
-            )
-        );
+        $game = $this->gameRepositoryInMemory->find($input->getArgument('game_id'));
+        $user = $this->userRepositoryInMemory->find($input->getArgument('user_id'));
 
-        $firstUserSelected = $game->getFirstUser()->getId() === $input->getArgument('user doing move identifier');
-
-        $this->userDoingMoveUseCase->__invoke(
-            $game, new UserMovement(
-                $firstUserSelected ? $game->getFirstUser() : $game->getSecondUser(),
-                new Position(
-                    $input->getArgument('X coordinate'),
-                    $input->getArgument('Y coordinate')
+        if (is_null($game) || is_null($user)) {
+            $output->writeln([
+                'Game or User Not Found',
+                '=========================',
+                '',
+            ]);
+        } else {
+            $this->userDoingMoveUseCase->__invoke(
+                $game, new UserMovement(
+                    $user,
+                    new Position(
+                        $input->getArgument('X coordinate'),
+                        $input->getArgument('Y coordinate')
+                    )
                 )
-            )
-        );
+            );
 
-        $output->writeln([
-            'Game Movement successfully executed',
-            '=========================',
-            '',
-        ]);
+            $output->writeln([
+                'Game Movement successfully executed',
+                '=========================',
+                '',
+            ]);
+        }
     }
 }
