@@ -131,11 +131,7 @@ final class Game
         $this->checkForDraw($firstPlayerMatrix, $secondPlayerMatrix);
     }
 
-    /**
-     * @param $playerMatrix
-     * @param $user
-     */
-    private function checkForWinnerInPlayerMatrix($playerMatrix, User $user): void
+    private function checkForWinnerInPlayerMatrix(array $playerMatrix, User $user): void
     {
         $totalRow    = 0;
         $totalColumn = 0;
@@ -165,11 +161,7 @@ final class Game
         }
     }
 
-    /**
-     * @param $firstPlayerMatrix
-     * @param $secondPlayerMatrix
-     */
-    private function checkForDraw($firstPlayerMatrix, $secondPlayerMatrix): void
+    private function checkForDraw(array $firstPlayerMatrix, array $secondPlayerMatrix): void
     {
         if (is_null($this->winner)) {
             $totalMoves = 0;

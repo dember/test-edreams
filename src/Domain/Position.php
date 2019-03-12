@@ -35,12 +35,12 @@ final class Position
         $this->y = $y;
     }
 
-    public function getX()
+    public function getX(): int
     {
         return $this->x;
     }
 
-    public function getY()
+    public function getY(): int
     {
         return $this->y;
     }

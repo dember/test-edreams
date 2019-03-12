@@ -7,20 +7,20 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TicTacToe\Application\CheckForGameFinishedWinnerUseCase;
-use TicTacToe\Infrastructure\GameRepositoryInMemory;
+use TicTacToe\Domain\GameRepository;
 
 class CheckForGameFinishedWinnerCommand extends Command
 {
     protected static $defaultName = 'tictactoe:game-check';
 
-    private $gameRepositoryInMemory;
+    private $gameRepository;
     private $checkForGameFinishedWinnerUseCase;
 
-    public function __construct(GameRepositoryInMemory $gameRepositoryInMemory, CheckForGameFinishedWinnerUseCase $checkForGameFinishedWinnerUseCase)
+    public function __construct(GameRepository $gameRepository, CheckForGameFinishedWinnerUseCase $checkForGameFinishedWinnerUseCase)
     {
         parent::__construct();
 
-        $this->gameRepositoryInMemory = $gameRepositoryInMemory;
+        $this->gameRepository = $gameRepository;
         $this->checkForGameFinishedWinnerUseCase = $checkForGameFinishedWinnerUseCase;
     }
 
@@ -37,7 +37,7 @@ class CheckForGameFinishedWinnerCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $game = $this->gameRepositoryInMemory->find($input->getArgument('game_id'));
+        $game = $this->gameRepository->find($input->getArgument('game_id'));
 
         if (is_null($game)) {
             $output->writeln([

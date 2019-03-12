@@ -6,6 +6,7 @@ namespace TicTacToe\tests\Domain;
 
 use PHPUnit\Framework\TestCase;
 use TicTacToe\Application\StartNewGameUseCase;
+use TicTacToe\Domain\Exception\NonUniqueUsersAtGameCreationException;
 use TicTacToe\Domain\Game;
 use TicTacToe\Domain\User;
 
@@ -16,6 +17,8 @@ final class StartNewGameUseCaseTest extends TestCase
      * @param array $user2
      *
      * @dataProvider getUsersInfo
+     *
+     * @throws NonUniqueUsersAtGameCreationException
      */
     public function testItStartNewGame(array $user1, array $user2)
     {
@@ -29,7 +32,7 @@ final class StartNewGameUseCaseTest extends TestCase
         $this->assertInstanceOf(Game::class, $game);
     }
 
-    public function getUsersInfo()
+    public function getUsersInfo(): array
     {
         return [
             [

@@ -7,6 +7,8 @@ namespace TicTacToe\tests\Domain;
 use PHPUnit\Framework\TestCase;
 use TicTacToe\Application\UserDoingMoveUseCase;
 use TicTacToe\Domain\Exception\GameAlreadyFinishedException;
+use TicTacToe\Domain\Exception\InvalidArgumentAtPositionCreationException;
+use TicTacToe\Domain\Exception\NonUniqueUsersAtGameCreationException;
 use TicTacToe\Domain\Exception\NotUserTurnException;
 use TicTacToe\Domain\Position;
 use TicTacToe\Domain\UserMovement;
@@ -16,6 +18,9 @@ final class UserDoingMoveUseCaseTest extends TestCase
 {
     private $gameRepositoryInMemory;
 
+    /**
+     * @throws NonUniqueUsersAtGameCreationException
+     */
     public function setUp()
     {
         $this->gameRepositoryInMemory = new GameRepositoryInMemory();
@@ -24,6 +29,7 @@ final class UserDoingMoveUseCaseTest extends TestCase
     /**
      * @throws GameAlreadyFinishedException
      * @throws NotUserTurnException
+     * @throws InvalidArgumentAtPositionCreationException
      */
     public function testItDoesAMove()
     {

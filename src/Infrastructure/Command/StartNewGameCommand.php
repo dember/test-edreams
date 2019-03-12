@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use TicTacToe\Application\StartNewGameUseCase;
+use TicTacToe\Domain\Exception\NonUniqueUsersAtGameCreationException;
 use TicTacToe\Domain\User;
 
 class StartNewGameCommand extends Command
@@ -39,22 +40,32 @@ class StartNewGameCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $game = $this->startNewGameUseCase->__invoke(
-            new User(
-                $input->getArgument('user1_id'),
-                $input->getArgument('user1')
-            ),
-            new User(
-                $input->getArgument('user2_id'),
-                $input->getArgument('user2')
-            )
-        );
+        $game = null;
 
-        $output->writeln([
-            'Game successfully started',
-            '=========================',
-            '',
-        ]);
+        try {
+            $game = $this->startNewGameUseCase->__invoke(
+                new User(
+                    $input->getArgument('user1_id'),
+                    $input->getArgument('user1')
+                ),
+                new User(
+                    $input->getArgument('user2_id'),
+                    $input->getArgument('user2')
+                )
+            );
+
+            $output->writeln([
+                'Game successfully started',
+                '=========================',
+                '',
+            ]);
+        } catch (NonUniqueUsersAtGameCreationException $exception) {
+            $output->writeln([
+                'An exception was found: ' . $exception->getMessage(),
+                '=========================',
+                '',
+            ]);
+        }
 
         return $game;
     }

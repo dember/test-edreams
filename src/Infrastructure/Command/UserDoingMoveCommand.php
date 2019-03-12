@@ -6,35 +6,31 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use TicTacToe\Application\StartNewGameUseCase;
 use TicTacToe\Application\UserDoingMoveUseCase;
-use TicTacToe\Domain\Exception\GameAlreadyFinishedException;
-use TicTacToe\Domain\Exception\NotUserTurnException;
+use TicTacToe\Domain\GameRepository;
 use TicTacToe\Domain\Position;
-use TicTacToe\Domain\User;
 use TicTacToe\Domain\UserMovement;
-use TicTacToe\Infrastructure\GameRepositoryInMemory;
-use TicTacToe\Infrastructure\UserRepositoryInMemory;
+use TicTacToe\Domain\UserRepository;
 
 class UserDoingMoveCommand extends Command
 {
     protected static $defaultName = 'tictactoe:game-move';
 
-    private $gameRepositoryInMemory;
-    private $userRepositoryInMemory;
+    private $gameRepository;
+    private $userRepository;
     private $userDoingMoveUseCase;
 
     public function __construct(
-        GameRepositoryInMemory $gameRepositoryInMemory,
-        UserRepositoryInMemory $userRepositoryInMemory,
+        GameRepository $gameRepository,
+        UserRepository $userRepository,
         UserDoingMoveUseCase $userDoingMoveUseCase
     )
     {
         parent::__construct();
 
-        $this->userRepositoryInMemory = $userRepositoryInMemory;
+        $this->gameRepository = $gameRepository;
 
-        $this->gameRepositoryInMemory = $gameRepositoryInMemory;
+        $this->userRepository = $userRepository;
 
         $this->userDoingMoveUseCase = $userDoingMoveUseCase;
     }
@@ -56,18 +52,10 @@ class UserDoingMoveCommand extends Command
         ;
     }
 
-    /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     *
-     * @return int|null|void
-     * @throws NotUserTurnException
-     * @throws GameAlreadyFinishedException
-     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $game = $this->gameRepositoryInMemory->find($input->getArgument('game_id'));
-        $user = $this->userRepositoryInMemory->find($input->getArgument('user_id'));
+        $game = $this->gameRepository->find($input->getArgument('game_id'));
+        $user = $this->userRepository->find($input->getArgument('user_id'));
 
         if (is_null($game) || is_null($user)) {
             $output->writeln([
@@ -76,21 +64,29 @@ class UserDoingMoveCommand extends Command
                 '',
             ]);
         } else {
-            $this->userDoingMoveUseCase->__invoke(
-                $game, new UserMovement(
-                    $user,
-                    new Position(
-                        $input->getArgument('X coordinate'),
-                        $input->getArgument('Y coordinate')
+            try {
+                $this->userDoingMoveUseCase->__invoke(
+                    $game, new UserMovement(
+                        $user,
+                        new Position(
+                            $input->getArgument('X coordinate'),
+                            $input->getArgument('Y coordinate')
+                        )
                     )
-                )
-            );
+                );
 
-            $output->writeln([
-                'Game Movement successfully executed',
-                '=========================',
-                '',
-            ]);
+                $output->writeln([
+                    'Game Movement successfully executed',
+                    '=========================',
+                    '',
+                ]);
+            } catch (\Exception $exception) {
+                $output->writeln([
+                    'An exception was found: ' . $exception->getMessage(),
+                    '=========================',
+                    '',
+                ]);
+            }
         }
     }
 }
